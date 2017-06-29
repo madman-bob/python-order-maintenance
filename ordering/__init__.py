@@ -19,6 +19,8 @@ class Ordering:
         }
 
     def insert_after(self, existing_item, new_item):
+        self.assert_contains(existing_item)
+
         self._labels[new_item] = (self._labels[existing_item] + self._labels[self._successors[existing_item]]) / 2
         self._successors[new_item] = self._successors[existing_item]
         self._predecessors[new_item] = existing_item
@@ -38,12 +40,27 @@ class Ordering:
         return self.insert_before(self._end, new_item)
 
     def compare(self, left_item, right_item):
+        self.assert_contains(left_item)
+        self.assert_contains(right_item)
+
         return self._labels[left_item] < self._labels[right_item]
+
+    def __contains__(self, item):
+        if isinstance(item, OrderingItem):
+            return item.item in self._labels
+
+        return item in self._labels
+
+    def assert_contains(self, item):
+        if item not in self:
+            raise KeyError("Ordering {} does not contain {}".format(self, item))
 
 
 @total_ordering
 class OrderingItem:
     def __init__(self, ordering, item):
+        ordering.assert_contains(item)
+
         self.ordering = ordering
         self.item = item
 
