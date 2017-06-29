@@ -61,6 +61,18 @@ class Ordering(Generic[T]):
 
         return item in self._labels
 
+    def __delitem__(self, item: T) -> None:
+        self.assert_contains(item)
+
+        self._successors[self._predecessors[item]] = self._successors[item]
+        self._predecessors[self._successors[item]] = self._predecessors[item]
+
+        del self._labels[item]
+        del self._successors[item]
+        del self._predecessors[item]
+
+    remove = __delitem__
+
     def assert_contains(self, item: _T) -> None:
         if item not in self:
             raise KeyError("Ordering {} does not contain {}".format(self, item))
