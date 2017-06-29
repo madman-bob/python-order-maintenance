@@ -66,3 +66,9 @@ class OrderingItem:
 
     def __lt__(self, other):
         return self.ordering.compare(self.item, other.item)
+
+    def insert_before(self, item):
+        return self.ordering.insert_before(self.item, item)
+
+    def insert_after(self, item):
+        return self.ordering.insert_after(self.item, item)
