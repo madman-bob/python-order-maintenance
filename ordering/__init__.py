@@ -20,6 +20,7 @@ class Ordering:
 
     def insert_after(self, existing_item, new_item):
         self.assert_contains(existing_item)
+        self.assert_new_item(new_item)
 
         self._labels[new_item] = (self._labels[existing_item] + self._labels[self._successors[existing_item]]) / 2
         self._successors[new_item] = self._successors[existing_item]
@@ -54,6 +55,10 @@ class Ordering:
     def assert_contains(self, item):
         if item not in self:
             raise KeyError("Ordering {} does not contain {}".format(self, item))
+
+    def assert_new_item(self, item):
+        if item in self:
+            raise KeyError("Ordering {} already contains {}".format(self, item))
 
 
 @total_ordering
