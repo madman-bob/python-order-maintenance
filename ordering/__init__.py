@@ -1,0 +1,38 @@
+from fractions import Fraction
+
+
+class Ordering:
+    _start = object()
+    _end = object()
+
+    def __init__(self):
+        self._labels = {
+            self._start: Fraction(0),
+            self._end: Fraction(1)
+        }
+        self._successors = {
+            self._start: self._end
+        }
+        self._predecessors = {
+            self._end: self._start
+        }
+
+    def insert_after(self, existing_item, new_item):
+        self._labels[new_item] = (self._labels[existing_item] + self._labels[self._successors[existing_item]]) / 2
+        self._successors[new_item] = self._successors[existing_item]
+        self._predecessors[new_item] = existing_item
+
+        self._predecessors[self._successors[existing_item]] = new_item
+        self._successors[existing_item] = new_item
+
+    def insert_before(self, existing_item, new_item):
+        self.insert_after(self._predecessors[existing_item], new_item)
+
+    def insert_start(self, new_item):
+        self.insert_after(self._start, new_item)
+
+    def insert_end(self, new_item):
+        self.insert_before(self._end, new_item)
+
+    def compare(self, left_item, right_item):
+        return self._labels[left_item] < self._labels[right_item]
