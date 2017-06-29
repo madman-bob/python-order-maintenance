@@ -1,4 +1,5 @@
 from fractions import Fraction
+from functools import total_ordering
 
 
 class Ordering:
@@ -25,14 +26,26 @@ class Ordering:
         self._predecessors[self._successors[existing_item]] = new_item
         self._successors[existing_item] = new_item
 
+        return OrderingItem(self, new_item)
+
     def insert_before(self, existing_item, new_item):
-        self.insert_after(self._predecessors[existing_item], new_item)
+        return self.insert_after(self._predecessors[existing_item], new_item)
 
     def insert_start(self, new_item):
-        self.insert_after(self._start, new_item)
+        return self.insert_after(self._start, new_item)
 
     def insert_end(self, new_item):
-        self.insert_before(self._end, new_item)
+        return self.insert_before(self._end, new_item)
 
     def compare(self, left_item, right_item):
         return self._labels[left_item] < self._labels[right_item]
+
+
+@total_ordering
+class OrderingItem:
+    def __init__(self, ordering, item):
+        self.ordering = ordering
+        self.item = item
+
+    def __lt__(self, other):
+        return self.ordering.compare(self.item, other.item)
