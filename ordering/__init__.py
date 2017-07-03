@@ -1,6 +1,6 @@
 from fractions import Fraction
 from functools import total_ordering
-from typing import Dict, Generic, TypeVar, Union
+from typing import Collection, Dict, Generic, Iterator, TypeVar, Union
 
 
 class _Sentinel:
@@ -11,7 +11,7 @@ T = TypeVar('T')
 _T = Union[T, _Sentinel]
 
 
-class Ordering(Generic[T]):
+class Ordering(Collection[T]):
     _start = _Sentinel()
     _end = _Sentinel()
 
@@ -60,6 +60,16 @@ class Ordering(Generic[T]):
             return item.item in self._labels
 
         return item in self._labels
+
+    def __iter__(self) -> Iterator[T]:
+        item = self._successors[self._start]
+
+        while not isinstance(item, _Sentinel):
+            yield item
+            item = self._successors[item]
+
+    def __len__(self) -> int:
+        return len(self._labels) - 2
 
     def __delitem__(self, item: T) -> None:
         self.assert_contains(item)
