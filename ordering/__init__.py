@@ -16,16 +16,16 @@ class Ordering(Collection[T]):
     _end = _Sentinel()
 
     def __init__(self) -> None:
-        self._labels = {
+        self._labels: Dict[_T, Fraction] = {
             self._start: Fraction(0),
             self._end: Fraction(1)
-        }  # type: Dict[_T, Fraction]
-        self._successors = {
+        }
+        self._successors: Dict[_T, _T] = {
             self._start: self._end
-        }  # type: Dict[_T, _T]
-        self._predecessors = {
+        }
+        self._predecessors: Dict[_T, _T] = {
             self._end: self._start
-        }  # type: Dict[_T, _T]
+        }
 
     def insert_after(self, existing_item: _T, new_item: T) -> 'OrderingItem[T]':
         self.assert_contains(existing_item)
