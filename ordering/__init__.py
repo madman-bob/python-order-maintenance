@@ -1,6 +1,6 @@
 from fractions import Fraction
 from functools import total_ordering
-from typing import Collection, Dict, Generic, Iterator, TypeVar, Union
+from typing import Dict, Generic, Iterator, Mapping, TypeVar, Union
 
 
 class _Sentinel:
@@ -11,7 +11,7 @@ T = TypeVar('T')
 _T = Union[T, _Sentinel]
 
 
-class Ordering(Collection[T]):
+class Ordering(Mapping[T, 'OrderingItem[T]']):
     _start = _Sentinel()
     _end = _Sentinel()
 
@@ -70,6 +70,12 @@ class Ordering(Collection[T]):
 
     def __len__(self) -> int:
         return len(self._labels) - 2
+
+    def __getitem__(self, item: T) -> 'OrderingItem[T]':
+        return OrderingItem(self, item)
+
+    # Doing this so that we can write sorted([...], key=ordering)
+    __call__ = __getitem__
 
     def __delitem__(self, item: T) -> None:
         self.assert_contains(item)

@@ -28,3 +28,9 @@ class TestComparisons(TestCase):
         for a, b in combinations(self.ordering_list, 2):
             self.assertTrue(self.ordering.compare(a, b))
             self.assertFalse(self.ordering.compare(b, a))
+
+    def test_sorting(self) -> None:
+        self.assertListEqual(
+            sorted(range(3), key=self.ordering),  # type:ignore # https://github.com/python/mypy/issues/797
+            [2, 0, 1]
+        )
