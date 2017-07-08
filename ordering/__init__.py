@@ -100,6 +100,11 @@ class OrderingItem(Generic[T]):
         self.ordering = ordering
         self.item = item
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, OrderingItem):
+            return bool(self.item == other)
+        return self.ordering == other.ordering and self.item == other.item
+
     def __lt__(self, other: 'OrderingItem[T]') -> bool:
         return self.ordering.compare(self.item, other.item)
 
