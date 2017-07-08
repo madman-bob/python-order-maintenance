@@ -18,6 +18,15 @@ class TestOrderingBasic(TestCase):
         self.assertIn(0, ordering)
         self.assertNotIn(1, ordering)
 
+    def test_remove(self) -> None:
+        ordering = Ordering[int]()
+
+        self.assertNotIn(0, ordering)
+        ordering.insert_start(0)
+        self.assertIn(0, ordering)
+        ordering.remove(0)
+        self.assertNotIn(0, ordering)
+
     def test_basic_insert_after(self) -> None:
         ordering = Ordering[int]()
         ordering.insert_start(0)
