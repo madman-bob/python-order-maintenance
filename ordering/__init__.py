@@ -4,6 +4,8 @@ from typing import Dict, Generic, Iterable, Iterator, List, Mapping, TypeVar, Un
 
 from .utils import pairs
 
+__all__ = ('Ordering', 'OrderingItem')
+
 
 class _Sentinel:
     pass
