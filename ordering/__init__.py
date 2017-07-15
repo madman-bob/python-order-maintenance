@@ -1,6 +1,8 @@
 from fractions import Fraction
 from functools import total_ordering
-from typing import Dict, Generic, Iterator, Mapping, TypeVar, Union
+from typing import Dict, Generic, Iterable, Iterator, List, Mapping, TypeVar, Union
+
+from .utils import pairs
 
 
 class _Sentinel:
@@ -15,17 +17,19 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
     _start = _Sentinel()
     _end = _Sentinel()
 
-    def __init__(self) -> None:
-        self._labels: Dict[_T, Fraction] = {
-            self._start: Fraction(0),
-            self._end: Fraction(1)
-        }
-        self._successors: Dict[_T, _T] = {
-            self._start: self._end
-        }
-        self._predecessors: Dict[_T, _T] = {
-            self._end: self._start
-        }
+    def __init__(self, iterable: Iterable[T] = ()) -> None:
+        self._labels: Dict[_T, Fraction] = {}
+        self._successors: Dict[_T, _T] = {}
+        self._predecessors: Dict[_T, _T] = {}
+
+        items: List[_T] = [self._start, *iterable, self._end]
+
+        for n, (a, b) in enumerate(pairs(items)):
+            self._labels[a] = Fraction(n, len(items) - 1)
+            self._successors[a] = b
+            self._predecessors[b] = a
+
+        self._labels[self._end] = Fraction(1)
 
     def insert_after(self, existing_item: _T, new_item: T) -> 'OrderingItem[T]':
         self.assert_contains(existing_item)

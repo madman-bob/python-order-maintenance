@@ -57,3 +57,10 @@ class TestOrderingBasic(TestCase):
 
         self.assertTrue(ordering.compare(2, 0))
         self.assertFalse(ordering.compare(0, 2))
+
+    def test_iterator_initialization(self) -> None:
+        ordering = Ordering[int]([2, 0, 1])
+
+        self.assertTrue(ordering.compare(2, 0))
+        self.assertTrue(ordering.compare(2, 1))
+        self.assertTrue(ordering.compare(0, 1))
