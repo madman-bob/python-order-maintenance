@@ -64,3 +64,27 @@ class TestOrderingBasic(TestCase):
         self.assertTrue(ordering.compare(2, 0))
         self.assertTrue(ordering.compare(2, 1))
         self.assertTrue(ordering.compare(0, 1))
+
+    def test_ordering_empty_repr(self) -> None:
+        self.assertEqual(repr(Ordering()), 'Ordering([])')
+
+    def test_ordering_int_repr(self) -> None:
+        with self.subTest(items=(0,)):
+            self.assertEqual(repr(Ordering[int]((0,))), 'Ordering([0])')
+        with self.subTest(items=(0, 1)):
+            self.assertEqual(repr(Ordering[int]((0, 1))), 'Ordering([0, 1])')
+
+    def test_ordering_str_repr(self) -> None:
+        with self.subTest(items='a'):
+            self.assertEqual(repr(Ordering[str]('a')), "Ordering(['a'])")
+        with self.subTest(items='AaBb'):
+            self.assertEqual(repr(Ordering[str]('AaBb')), "Ordering(['A', 'a', 'B', 'b'])")
+
+    def test_ordering_item_repr_int(self) -> None:
+        ordering_item = Ordering[int]((2, 0, 1))[1]
+        self.assertEqual(repr(ordering_item), '<OrderingItem: 1>')
+
+    def test_ordering_item_repr_str(self) -> None:
+        ordering_item = Ordering[str]('cab')['a']
+        self.assertEqual(repr(ordering_item), "<OrderingItem: 'a'>")
+
