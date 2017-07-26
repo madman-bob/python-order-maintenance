@@ -97,11 +97,11 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
 
     def assert_contains(self, item: _T) -> None:
         if item not in self:
-            raise KeyError("Ordering {} does not contain {}".format(self, item))
+            raise KeyError('{} does not contain {!r}'.format(type(self).__name__, item))
 
     def assert_new_item(self, item: T) -> None:
         if item in self:
-            raise KeyError("Ordering {} already contains {}".format(self, item))
+            raise ValueError('{} already contains {!r}'.format(type(self).__name__, item))
 
 
 @total_ordering
