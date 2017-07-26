@@ -1,6 +1,6 @@
 from fractions import Fraction
 from functools import total_ordering
-from typing import Dict, Generic, Iterable, Iterator, List, Mapping, TypeVar, Union
+from typing import Dict, Generic, Iterable, Iterator, List, Mapping, Tuple, TypeVar, Union
 
 from .utils import pairs
 
@@ -60,6 +60,26 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
         self.assert_contains(right_item)
 
         return self._labels[left_item] < self._labels[right_item]
+
+    def swap(self, item: T, other: T) -> None:
+        lower, upper = (item, other) if self.compare(item, other) else (other, item)
+        if item == other:
+            return
+
+        self._labels[item], self._labels[other] = self._labels[other], self._labels[item]
+        successors, predecessors = self._successors, self._predecessors
+
+        new_orders: Tuple[Tuple[_T, ...], ...]
+        if successors[lower] == upper:  # swapping two adjacent items
+            new_orders = (predecessors[lower], upper, lower, successors[upper]),
+        else:
+            new_orders = ((predecessors[item], other, successors[item]),
+                          (predecessors[other], item, successors[other]))
+
+        for order in new_orders:
+            for a, b in zip(order, order[1:]):
+                successors[a] = b
+                predecessors[b] = a
 
     def __contains__(self, item: _T) -> bool:
         if isinstance(item, OrderingItem):
