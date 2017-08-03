@@ -64,3 +64,19 @@ class TestOrderingBasic(TestCase):
         self.assertTrue(ordering.compare(2, 0))
         self.assertTrue(ordering.compare(2, 1))
         self.assertTrue(ordering.compare(0, 1))
+
+    def test_reverse_iter(self) -> None:
+        items: list
+        for items in [], [0], [0, 1], [2, 0, 1]:  # type: ignore # https://github.com/python/mypy/issues/2255
+            with self.subTest(items=items):
+                ordering = Ordering[int](items)
+                ordering.reverse()
+                self.assertListEqual(list(ordering), items[::-1])
+
+    def test_reverse_compare(self) -> None:
+        for items in [0, 1], [2, 0, 1], [2, 0, 1, 3]:
+            ordering = Ordering[int](items)
+            ordering.reverse()
+            for greater, lesser in zip(items, items[1:]):
+                with self.subTest(items=items, lesser=lesser, greater=greater):
+                    self.assertLess(ordering[lesser], ordering[greater])
