@@ -61,6 +61,18 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
 
         return self._labels[left_item] < self._labels[right_item]
 
+    def replace(self, existing_item: T, new_item: T) -> None:
+        self.assert_contains(existing_item)
+        if existing_item != new_item:
+            self.assert_new_item(new_item)
+
+            self._successors[self._predecessors[existing_item]] = \
+            self._predecessors[self._successors[existing_item]] = new_item
+
+            self._successors[new_item] = self._successors.pop(existing_item)
+            self._predecessors[new_item] = self._predecessors.pop(existing_item)
+            self._labels[new_item] = self._labels.pop(existing_item)
+
     def __contains__(self, item: _T) -> bool:
         if isinstance(item, OrderingItem):
             return item.item in self._labels
