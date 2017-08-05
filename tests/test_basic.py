@@ -64,3 +64,15 @@ class TestOrderingBasic(TestCase):
         self.assertTrue(ordering.compare(2, 0))
         self.assertTrue(ordering.compare(2, 1))
         self.assertTrue(ordering.compare(0, 1))
+
+    def test_iterator_initialization_duplicates(self) -> None:
+        items_list: list = [[1, '1'], [1, 1+1j], ['a', b'a']]
+        for items in items_list:
+            with self.subTest(items=items):
+                self.assertListEqual(list(Ordering(items)), items)
+
+        items_list = [[1, 1], [1, 1.0], [1, 1+0j], [0, 0, 1], [0, 1, 0], [1, 0, 0], 'abracadabra']
+        for items in items_list:
+            with self.subTest(items=items):
+                with self.assertRaisesRegex(ValueError, 'attempt to create Ordering containing duplicate items'):
+                    Ordering(items)

@@ -1,6 +1,6 @@
 from fractions import Fraction
 from functools import total_ordering
-from typing import Dict, Generic, Iterable, Iterator, List, Mapping, TypeVar, Union
+from typing import Collection, Dict, Generic, Iterable, Iterator, List, Mapping, TypeVar, Union
 
 from .utils import pairs
 
@@ -25,6 +25,7 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
         self._predecessors: Dict[_T, _T] = {}
 
         items: List[_T] = [self._start, *iterable, self._end]
+        self.assert_unique_items(items)
 
         for n, (a, b) in enumerate(pairs(items)):
             self._labels[a] = Fraction(n, len(items) - 1)
@@ -102,6 +103,14 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
     def assert_new_item(self, item: T) -> None:
         if item in self:
             raise KeyError("Ordering {} already contains {}".format(self, item))
+
+    @classmethod
+    def assert_unique_items(cls, items: Collection[_T]) -> None:
+        if len(items) > len(set(items)):
+            d: Dict[_T, bool] = {}
+            duplicates = [i for i in items if i in d or d.setdefault(i, False)]
+            raise ValueError('attempt to create {} containing duplicate items: {}'
+                             .format(cls.__name__, repr(duplicates)[1:-1]))
 
 
 @total_ordering
