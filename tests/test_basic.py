@@ -64,3 +64,18 @@ class TestOrderingBasic(TestCase):
         self.assertTrue(ordering.compare(2, 0))
         self.assertTrue(ordering.compare(2, 1))
         self.assertTrue(ordering.compare(0, 1))
+
+    def test_basic_clear(self) -> None:
+        ordering = Ordering[int]([2, 0, 1])
+        ordering.clear()
+
+        with self.subTest('items not in ordering'):
+            self.assertNotIn(0, ordering)
+            self.assertNotIn(1, ordering)
+            self.assertNotIn(2, ordering)
+
+        with self.subTest('len(ordering) == 0'):
+            self.assertEqual(len(ordering), 0)
+
+        with self.subTest('list(ordering) == []'):
+            self.assertListEqual(list(ordering), [])

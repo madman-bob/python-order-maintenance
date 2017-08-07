@@ -55,6 +55,16 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
     def insert_end(self, new_item: T) -> 'OrderingItem[T]':
         return self.insert_before(self._end, new_item)
 
+    def clear(self) -> None:
+        self._labels.clear()
+        self._labels.update({self._start: Fraction(0), self._end: Fraction(1)})
+
+        self._successors.clear()
+        self._successors.update({self._start: self._end})
+
+        self._predecessors.clear()
+        self._predecessors.update({self._end: self._start})
+
     def compare(self, left_item: T, right_item: T) -> bool:
         self.assert_contains(left_item)
         self.assert_contains(right_item)
