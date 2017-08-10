@@ -33,8 +33,7 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
 
         self._labels[self._end] = Fraction(1)
 
-    def insert_after(self, existing_item: _T, new_item: T) -> 'OrderingItem[T]':
-        self.assert_contains(existing_item)
+    def _insert_after(self, existing_item: _T, new_item: T) -> 'OrderingItem[T]':
         self.assert_new_item(new_item)
 
         self._labels[new_item] = (self._labels[existing_item] + self._labels[self._successors[existing_item]]) / 2
@@ -46,18 +45,26 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
 
         return OrderingItem(self, new_item)
 
-    def insert_before(self, existing_item: _T, new_item: T) -> 'OrderingItem[T]':
-        return self.insert_after(self._predecessors[existing_item], new_item)
+    def insert_after(self, existing_item: T, new_item: T) -> 'OrderingItem[T]':
+        self._assert_contains(existing_item)
+        return self._insert_after(existing_item, new_item)
+
+    def _insert_before(self, existing_item: _T, new_item: T) -> 'OrderingItem[T]':
+        return self._insert_after(self._predecessors[existing_item], new_item)
+
+    def insert_before(self, existing_item: T, new_item: T) -> 'OrderingItem[T]':
+        self._assert_contains(existing_item)
+        return self._insert_after(self._predecessors[existing_item], new_item)
 
     def insert_start(self, new_item: T) -> 'OrderingItem[T]':
-        return self.insert_after(self._start, new_item)
+        return self._insert_after(self._start, new_item)
 
     def insert_end(self, new_item: T) -> 'OrderingItem[T]':
-        return self.insert_before(self._end, new_item)
+        return self._insert_after(self._predecessors[self._end], new_item)
 
     def compare(self, left_item: T, right_item: T) -> bool:
-        self.assert_contains(left_item)
-        self.assert_contains(right_item)
+        self._assert_contains(left_item)
+        self._assert_contains(right_item)
 
         return self._labels[left_item] < self._labels[right_item]
 
@@ -84,7 +91,7 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
     __call__ = __getitem__
 
     def __delitem__(self, item: T) -> None:
-        self.assert_contains(item)
+        self._assert_contains(item)
 
         self._successors[self._predecessors[item]] = self._successors[item]
         self._predecessors[self._successors[item]] = self._predecessors[item]
@@ -95,9 +102,12 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
 
     remove = __delitem__
 
-    def assert_contains(self, item: _T) -> None:
+    def _assert_contains(self, item: _T) -> None:
         if item not in self:
             raise KeyError("Ordering {} does not contain {}".format(self, item))
+
+    def assert_contains(self, item: T) -> None:
+        self._assert_contains(item)
 
     def assert_new_item(self, item: T) -> None:
         if item in self:
@@ -107,7 +117,7 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
 @total_ordering
 class OrderingItem(Generic[T]):
     def __init__(self, ordering: Ordering[T], item: T) -> None:
-        ordering.assert_contains(item)
+        ordering._assert_contains(item)
 
         self.ordering = ordering
         self.item = item
