@@ -61,7 +61,7 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
 
         return self._labels[left_item] < self._labels[right_item]
 
-    def __contains__(self, item: _T) -> bool:
+    def __contains__(self, item: object) -> bool:
         if isinstance(item, OrderingItem):
             return item.item in self._labels
 
