@@ -61,6 +61,16 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
 
         return self._labels[left_item] < self._labels[right_item]
 
+    def reverse(self):
+        self._successors, self._predecessors = self._predecessors, self._successors
+        self._successors[self._start] = self._successors.pop(self._end)
+        self._predecessors[self._end] = self._predecessors.pop(self._start)
+
+        labels = self._labels
+        as_list = list(self)
+        for a, b in zip(as_list[:len(self) // 2], reversed(as_list)):
+            labels[a], labels[b] = labels[b], labels[a]
+
     def __contains__(self, item: _T) -> bool:
         if isinstance(item, OrderingItem):
             return item.item in self._labels
