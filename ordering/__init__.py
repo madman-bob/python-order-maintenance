@@ -2,8 +2,6 @@ from fractions import Fraction
 from functools import total_ordering
 from typing import Dict, Generic, Iterable, Iterator, List, Mapping, TypeVar, Union
 
-from .utils import pairs
-
 __all__ = ('Ordering', 'OrderingItem')
 
 
@@ -30,7 +28,7 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
 
         items: List[_T] = [self._start, *iterable, self._end]
 
-        for n, (a, b) in enumerate(pairs(items)):
+        for n, (a, b) in enumerate(zip(items, items[1:])):
             self._labels[a] = Fraction(n, len(items) - 1)
             self._successors[a] = b
             self._predecessors[b] = a
