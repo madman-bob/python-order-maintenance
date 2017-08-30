@@ -132,7 +132,9 @@ class OrderingItem(Generic[T]):
             return bool(self.item == other)
         return self.ordering == other.ordering and self.item == other.item
 
-    def __lt__(self, other: 'OrderingItem[T]') -> bool:
+    def __lt__(self, other: object) -> bool:
+        if not isinstance(other, OrderingItem):
+            return NotImplemented
         return self.ordering.compare(self.item, other.item)
 
     def insert_before(self, item: T) -> 'OrderingItem[T]':
