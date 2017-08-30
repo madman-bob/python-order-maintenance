@@ -65,6 +65,21 @@ class TestOrderingBasic(TestCase):
         self.assertTrue(ordering.compare(2, 1))
         self.assertTrue(ordering.compare(0, 1))
 
+    def test_basic_clear(self) -> None:
+        ordering = Ordering[int]([2, 0, 1])
+        ordering.clear()
+
+        with self.subTest('items not in ordering'):
+            self.assertNotIn(0, ordering)
+            self.assertNotIn(1, ordering)
+            self.assertNotIn(2, ordering)
+
+        with self.subTest('len(ordering) == 0'):
+            self.assertEqual(len(ordering), 0)
+
+        with self.subTest('list(ordering) == []'):
+            self.assertListEqual(list(ordering), [])
+
     def test_ordering_empty_repr(self) -> None:
         self.assertEqual(repr(Ordering()), 'Ordering([])')
 
@@ -87,4 +102,3 @@ class TestOrderingBasic(TestCase):
     def test_ordering_item_repr_str(self) -> None:
         ordering_item = Ordering[str]('cab')['a']
         self.assertEqual(repr(ordering_item), "<OrderingItem: 'a'>")
-
