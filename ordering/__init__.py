@@ -8,8 +8,12 @@ __all__ = ('Ordering', 'OrderingItem')
 
 
 class _Sentinel:
-    pass
+    def __set_name__(self, owner, name) -> None:
+        self.owner = owner
+        self.name = name
 
+    def __repr__(self) -> str:
+        return '{}.{}'.format(self.owner.__qualname__, self.name)
 
 T = TypeVar('T')
 _T = Union[T, _Sentinel]
@@ -103,6 +107,9 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
         if item in self:
             raise KeyError("Ordering {} already contains {}".format(self, item))
 
+    def __repr__(self) -> str:
+        return '{}({})'.format(type(self).__name__, list(self))
+
 
 @total_ordering
 class OrderingItem(Generic[T]):
@@ -125,3 +132,6 @@ class OrderingItem(Generic[T]):
 
     def insert_after(self, item: T) -> 'OrderingItem[T]':
         return self.ordering.insert_after(self.item, item)
+
+    def __repr__(self) -> str:
+        return '<{}: {!r}>'.format(type(self).__name__, self.item)
