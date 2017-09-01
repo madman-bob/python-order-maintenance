@@ -71,7 +71,7 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
         if self is other:
             return True
         if not isinstance(other, Ordering):
-            return NotImplemented
+            return NotImplemented  # type: ignore # https://github.com/python/mypy/issues/363
         if len(self) != len(other):
             return False
         return all(a == b for a, b in zip(self, other))
