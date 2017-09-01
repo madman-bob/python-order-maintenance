@@ -79,6 +79,15 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
 
         return item in self._labels
 
+    def __eq__(self, other: object) -> bool:
+        if self is other:
+            return True
+        if not isinstance(other, Ordering):
+            return NotImplemented  # type: ignore # https://github.com/python/mypy/issues/363
+        if len(self) != len(other):
+            return False
+        return all(a == b for a, b in zip(self, other))
+
     def __iter__(self) -> Iterator[T]:
         item = self._successors[self._start]
 
@@ -129,8 +138,8 @@ class OrderingItem(Generic[T]):
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, OrderingItem):
-            return bool(self.item == other)
-        return self.ordering == other.ordering and self.item == other.item
+            return self.item == other
+        return self.item == other.item and self.ordering == other.ordering
 
     def __lt__(self, other: object) -> bool:
         if not isinstance(other, OrderingItem):

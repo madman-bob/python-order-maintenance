@@ -34,3 +34,21 @@ class TestComparisons(TestCase):
             sorted(range(3), key=self.ordering),  # type:ignore # https://github.com/python/mypy/issues/797
             [2, 0, 1]
         )
+
+    def test_ordering_equality(self) -> None:
+        self.assertEqual(self.ordering, self.ordering)
+        self.assertEqual(self.ordering, Ordering[int](self.ordering_list))
+
+    def test_ordering_inequality(self) -> None:
+        self.assertNotEqual(self.ordering, Ordering[int]())
+        self.assertNotEqual(self.ordering, Ordering[int](self.ordering_list[::-1]))
+
+    def test_ordering_item_equality(self) -> None:
+        for a in self.ordering:
+            with self.subTest(a=a):
+                self.assertEqual(self.ordering[a], self.ordering[a])
+
+    def test_ordering_item_inequality(self) -> None:
+        for a, b in combinations(self.ordering, 2):
+            with self.subTest(a=a, b=b):
+                self.assertNotEqual(self.ordering[a], self.ordering[b])
