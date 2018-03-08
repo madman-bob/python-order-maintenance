@@ -77,6 +77,16 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
         self._insert_after(lower_predecessor, upper)
         self._insert_before(upper_successor, lower)
 
+    def replace(self, existing_item: T, new_item: T) -> None:
+        self.assert_contains(existing_item)
+
+        previous_item = self._predecessors[existing_item]
+        del self[existing_item]
+
+        self.assert_new_item(new_item)
+
+        self._insert_after(previous_item, new_item)
+
     def clear(self) -> None:
         self._labels.clear()
         self._labels.update({self._start: Fraction(0), self._end: Fraction(1)})
