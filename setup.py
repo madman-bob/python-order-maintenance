@@ -8,7 +8,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as readme_file:
 
 setup(
     name='ordering',
-    version='0.1.0',
+    version='0.2.0',
     description='A data structure to impose a total order on a collection of objects',
     long_description=long_description,
     url='https://github.com/madman-bob/python-order-maintenance',
