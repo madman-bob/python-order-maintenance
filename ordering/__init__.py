@@ -65,6 +65,18 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
     def insert_end(self, new_item: T) -> 'OrderingItem[T]':
         return self._insert_after(self._predecessors[self._end], new_item)
 
+    def swap(self, item: T, other: T) -> None:
+        lower, upper = (item, other) if self.compare(item, other) else (other, item)
+        if lower == upper:
+            return
+
+        upper_successor = self._successors[upper]
+        lower_predecessor = self._predecessors[lower]
+        del self[lower], self[upper]
+
+        self._insert_after(lower_predecessor, upper)
+        self._insert_before(upper_successor, lower)
+
     def clear(self) -> None:
         self._labels.clear()
         self._labels.update({self._start: Fraction(0), self._end: Fraction(1)})
