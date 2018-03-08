@@ -102,3 +102,15 @@ class TestOrderingBasic(TestCase):
     def test_ordering_item_repr_str(self) -> None:
         ordering_item = Ordering[str]('cab')['a']
         self.assertEqual(repr(ordering_item), "<OrderingItem: 'a'>")
+
+    def test_iterator_initialization_duplicates(self) -> None:
+        items_list: list = [[1, '1'], [1, 1 + 1j], ['a', b'a']]
+        for items in items_list:
+            with self.subTest(items=items):
+                self.assertListEqual(list(Ordering(items)), items)
+
+        items_list = [[1, 1], [1, 1.0], [1, 1 + 0j], [0, 0, 1], [0, 1, 0], [1, 0, 0], 'abracadabra']
+        for items in items_list:
+            with self.subTest(items=items):
+                with self.assertRaisesRegex(ValueError, "duplicate items"):
+                    Ordering(items)
