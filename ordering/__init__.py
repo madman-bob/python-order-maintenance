@@ -121,11 +121,13 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
         return all(a == b for a, b in zip(self, other))
 
     def __iter__(self) -> Iterator[T]:
-        item = self._successors[self._start]
-
-        while not isinstance(item, _Sentinel):
+        successors = self._successors
+        item = successors[self._start]
+        end = self._end
+        while item is not end:
+            assert not isinstance(item, _Sentinel)
             yield item
-            item = self._successors[item]
+            item = successors[item]
 
     def __len__(self) -> int:
         return len(self._labels) - 2
