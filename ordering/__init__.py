@@ -150,14 +150,14 @@ class Ordering(Mapping[T, 'OrderingItem[T]']):
 
     def _assert_contains(self, item: _T) -> None:
         if item not in self:
-            raise KeyError("Ordering {} does not contain {}".format(self, item))
+            raise KeyError('{} does not contain {!r}'.format(type(self).__name__, item))
 
     def assert_contains(self, item: T) -> None:
         self._assert_contains(item)
 
     def assert_new_item(self, item: T) -> None:
         if item in self:
-            raise KeyError("Ordering {} already contains {}".format(self, item))
+            raise ValueError('{} already contains {!r}'.format(type(self).__name__, item))
 
     @classmethod
     def assert_unique_items(cls, items: Collection[_T]) -> None:
